@@ -61,6 +61,34 @@
   margin: 0;
 }
 
+.view-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.view-tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  border: 2px solid #4a3c2a;
+  border-radius: 8px;
+  background: rgba(245, 240, 230, 0.6);
+  color: #4a3c2a;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.view-tab:hover {
+  background: rgba(245, 240, 230, 0.9);
+}
+
+.view-tab.active {
+  background: #c9a227;
+  border-color: #c9a227;
+  color: #2d1b1b;
+  font-weight: 600;
+}
+
 .search-section {
   margin-bottom: 1.5rem;
 }
@@ -279,6 +307,70 @@
 .game-badge.OTR {
   background: #7d4e57;
   color: #f0e0e4;
+}
+
+/* エリア別 */
+.area-section {
+  padding: 0;
+}
+
+.area-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.area-details {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd5c4;
+  overflow: hidden;
+}
+
+.area-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #2d1b1b;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.area-summary::-webkit-details-marker {
+  display: none;
+}
+
+.area-summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.area-details[open] .area-summary::before {
+  transform: rotate(90deg);
+}
+
+.area-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b5b4a;
+}
+
+.area-details .area-weapon-list {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid #eee8dc;
+}
+
+.area-empty {
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #6b5b4a;
 }
 
 .footer {

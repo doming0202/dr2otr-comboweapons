@@ -8,7 +8,14 @@ import {
   getItemLocations,
   getItemWikiUrl,
 } from "./itemLocations";
+import {
+  MAIN_AREAS,
+  getComboWeaponsByAllAreas,
+  type MainArea,
+} from "./areaComboWeapons";
 import "./App.css";
+
+type ViewMode = "search" | "area";
 
 function ClickableIngredient({
   name,
@@ -98,6 +105,7 @@ function ItemLocationModal({
 }
 
 function App() {
+  const [viewMode, setViewMode] = useState<ViewMode>("search");
   const [query, setQuery] = useState("");
   const [gameFilter, setGameFilter] = useState<Game | "">("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -106,6 +114,11 @@ function App() {
     const filter: Game | undefined = gameFilter || undefined;
     return searchComboWeapons(query, filter);
   }, [query, gameFilter]);
+
+  const areaWeapons = useMemo(() => {
+    const filter: Game | undefined = gameFilter || undefined;
+    return getComboWeaponsByAllAreas(filter);
+  }, [gameFilter]);
 
   const showAllOnEmpty = query.trim() === "";
   const displayResults = showAllOnEmpty ? COMBO_WEAPONS : results;
@@ -118,6 +131,23 @@ function App() {
           DR2 & Off the Record のコンボ武器をアイテム名で検索
         </p>
       </header>
+
+      <section className="view-tabs">
+        <button
+          type="button"
+          className={`view-tab ${viewMode === "search" ? "active" : ""}`}
+          onClick={() => setViewMode("search")}
+        >
+          検索
+        </button>
+        <button
+          type="button"
+          className={`view-tab ${viewMode === "area" ? "active" : ""}`}
+          onClick={() => setViewMode("area")}
+        >
+          エリア別
+        </button>
+      </section>
 
       <section className="search-section">
         <div className="search-box">
@@ -142,50 +172,117 @@ function App() {
       </section>
 
       <section className="results-section">
-        {showAllOnEmpty ? (
-          <p className="results-info">
-            検索欄にアイテムを入力すると、その材料を含むコンボ武器の候補が表示されます。
-            アイテム名をクリックで取得場所を表示。未入力の場合は全
-            {COMBO_WEAPONS.length}件を表示しています。
-          </p>
-        ) : (
-          <p className="results-info">
-            「{query}」に一致するコンボ武器: {results.length}件
-          </p>
-        )}
+        {viewMode === "search" ? (
+          <>
+            {showAllOnEmpty ? (
+              <p className="results-info">
+                検索欄にアイテムを入力すると、その材料を含むコンボ武器の候補が表示されます。
+                アイテム名をクリックで取得場所を表示。未入力の場合は全
+                {COMBO_WEAPONS.length}件を表示しています。
+              </p>
+            ) : (
+              <p className="results-info">
+                「{query}」に一致するコンボ武器: {results.length}件
+              </p>
+            )}
 
-        <ul className="weapon-list">
-          {displayResults.map((weapon) => (
-            <li
-              key={`${weapon.name}-${weapon.games.join("-")}`}
-              className="weapon-card"
-            >
-              <div className="weapon-name">{weapon.name}</div>
-              <div className="weapon-recipe">
-                <ClickableIngredient
-                  name={weapon.ingredient1}
-                  onClick={() => setSelectedItem(weapon.ingredient1)}
-                />
-                {" + "}
-                <ClickableIngredient
-                  name={weapon.ingredient2}
-                  onClick={() => setSelectedItem(weapon.ingredient2)}
-                />
-              </div>
-              <div className="weapon-games">
-                {weapon.games.map((g) => (
-                  <span
-                    key={g}
-                    className={`game-badge ${g}`}
-                    title={g === "DR2" ? "Dead Rising 2" : "Off the Record"}
-                  >
-                    {g}
-                  </span>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
+            <ul className="weapon-list">
+              {displayResults.map((weapon) => (
+                <li
+                  key={`${weapon.name}-${weapon.games.join("-")}`}
+                  className="weapon-card"
+                >
+                  <div className="weapon-name">{weapon.name}</div>
+                  <div className="weapon-recipe">
+                    <ClickableIngredient
+                      name={weapon.ingredient1}
+                      onClick={() => setSelectedItem(weapon.ingredient1)}
+                    />
+                    {" + "}
+                    <ClickableIngredient
+                      name={weapon.ingredient2}
+                      onClick={() => setSelectedItem(weapon.ingredient2)}
+                    />
+                  </div>
+                  <div className="weapon-games">
+                    {weapon.games.map((g) => (
+                      <span
+                        key={g}
+                        className={`game-badge ${g}`}
+                        title={g === "DR2" ? "Dead Rising 2" : "Off the Record"}
+                      >
+                        {g}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <div className="area-section">
+            <p className="results-info">
+              エリア内で両方の材料が揃うコンボ武器を表示。アイテム名クリックで取得場所を確認。
+            </p>
+            <div className="area-list">
+              {(MAIN_AREAS as readonly string[]).map((area) => {
+                const weapons = areaWeapons[area as MainArea];
+                return (
+                  <details key={area} className="area-details">
+                    <summary className="area-summary">
+                      {area}
+                      <span className="area-count">{weapons.length}件</span>
+                    </summary>
+                    {weapons.length > 0 ? (
+                      <ul className="weapon-list area-weapon-list">
+                        {weapons.map((weapon) => (
+                          <li
+                            key={`${weapon.name}-${weapon.games.join("-")}`}
+                            className="weapon-card"
+                          >
+                            <div className="weapon-name">{weapon.name}</div>
+                            <div className="weapon-recipe">
+                              <ClickableIngredient
+                                name={weapon.ingredient1}
+                                onClick={() =>
+                                  setSelectedItem(weapon.ingredient1)
+                                }
+                              />
+                              {" + "}
+                              <ClickableIngredient
+                                name={weapon.ingredient2}
+                                onClick={() =>
+                                  setSelectedItem(weapon.ingredient2)
+                                }
+                              />
+                            </div>
+                            <div className="weapon-games">
+                              {weapon.games.map((g) => (
+                                <span
+                                  key={g}
+                                  className={`game-badge ${g}`}
+                                  title={
+                                    g === "DR2"
+                                      ? "Dead Rising 2"
+                                      : "Off the Record"
+                                  }
+                                >
+                                  {g}
+                                </span>
+                              ))}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="area-empty">このエリアで作成できるコンボ武器はありません。</p>
+                    )}
+                  </details>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </section>
 
       {selectedItem && (

@@ -1,6 +1,6 @@
 /**
  * アイテム取得場所データ
- * 参考: Dead Rising Wiki, GameFAQs (jamby)
+ * 参考: Dead Rising Wiki (https://deadrising.fandom.com/), GameFAQs (jamby)
  */
 
 const WIKI_BASE = "https://deadrising.fandom.com/wiki/";
@@ -24,7 +24,16 @@ export const ITEM_LOCATIONS: Record<string, string[]> = {
   "Bingo Ball Cage": ["One Little Duck Bingo (Silver Strip)"],
   "Blast Frequency Gun": ["Secret Lab (Underground)"],
   "Bow and Arrow": ["The Chieftain's Hut (Royal Flush Plaza 1st Floor)"],
-  "Bowie Knife": ["Shank's (Palisades Mall 1st Floor)", "Dropped by zombies with blue shirt and yellow outlining"],
+  "Bowie Knife": [
+    "Bob's Fish 'n Hunt (P107) - Case Zero",
+    "Still Creek Movie Theater (PR105) - Case Zero",
+    "Americana Casino restroom / Bennie Jack's BBQ Shack (A101)",
+    "Fortune Park - Maintenance Room 11 south side",
+    "Palisades Mall - Ned's Knicknackery (P204) / Shanks (P107)",
+    "Royal Flush Plaza first floor / rooftop / Yesterday, Today & Tomorrow (R114)",
+    "Silver Strip - Luaii Wauwii (N105) on patio / Maintenance Room 16 behind Pub O' Gold (N107)",
+    "Underground - Secret Lab",
+  ],
   "Bowling Ball": ["Sportrance (Royal Flush Plaza 1st Floor)"],
   "Box of Nails": ["Maintenance Room as soon as you go up the stairs from the vent room"],
   "Boxing Gloves": ["The Man's Sport (Royal Flush Plaza 1st Floor)"],
@@ -57,7 +66,21 @@ export const ITEM_LOCATIONS: Record<string, string[]> = {
   "Drink Cart": ["In Casinos"],
   Drum: ["Tune Makers"],
   Dumbbell: ["The Man's Sport (Royal Flush Plaza 1st Floor)"],
-  Dynamite: ["Maintenance Room #5 in the Food Court"],
+  Dynamite: [
+    "Fortune City Arena - Maintenance Room 23",
+    "Palisades Mall - Maintenance Room 9",
+    "Royal Flush Plaza - outside Children's Castle atop palm tree",
+    "Silver Strip - Maintenance Room 17",
+    "Underground - Maintenance Room 33",
+    "Food Court - Maintenance Room 5 / Wild West Grill House awning / upper platforms",
+    "Fortune Park - main area / Maintenance Room 11",
+    "Palisades Mall - first floor / second floor / Kid's Choice Clothing",
+    "Silver Strip - Maintenance Room 14 / Rockets Red Glare on kiosk",
+    "South Plaza - main floor / upper platforms",
+    "Underground - Maintenance Room 31",
+    "Uranus Zone - main area / south & west upper platforms / Maintenance Room 3 (OTR)",
+    "Holding Pens / Living Quarters / Research Laboratory (Case West)",
+  ],
   "Electric Guitar": ["Tune Makers"],
   "Fancy Bench": ["Around the Malls (Royal Flush Plaza)"],
   "Fancy Painting": ["The Cleroux Collection (Palisades Mall 2nd Floor)"],

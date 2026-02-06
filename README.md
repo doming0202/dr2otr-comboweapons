@@ -104,6 +104,18 @@ pnpm android:build
 
 ---
 
+## アイテム取得場所データの更新
+
+Dead Rising Wiki から取得場所をスクレイプして `itemLocations.ts` を更新したい場合、以下を実行してください。ネットワーク接続が必要です。
+
+```bash
+pnpm wiki:fetch
+```
+
+スクリプトは各アイテムの Wiki ページを取得し、`scripts/wiki-locations.json` に出力します。取得したデータを `src/itemLocations.ts` に手動で反映してください。
+
+---
+
 ## 参考
 
 - [Dead Rising Wiki - Combo Weapons](https://deadrising.fandom.com/wiki/Combo_Weapons_(Dead_Rising_2))
