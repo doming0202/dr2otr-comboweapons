@@ -13,7 +13,7 @@ const base =
 // https://vite.dev/config/
 export default defineConfig(async () => ({
   plugins: [react()],
-  base,
+  base: '/dr2otr-comboweapons/',
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
