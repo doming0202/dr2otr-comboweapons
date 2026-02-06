@@ -1,6 +1,7 @@
 # DR2/OTR コンボ武器検索
 
 Dead Rising 2 と Off the Record のコンボ武器をアイテム名で検索できるアプリです。
+https://doming0202.github.io/dr2otr-comboweapons/
 
 ## 動作環境
 
