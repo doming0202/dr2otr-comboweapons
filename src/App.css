@@ -149,6 +149,113 @@
   color: #5a4a3a;
 }
 
+.ingredient-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #3d5a80;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.ingredient-link:hover {
+  color: #7d4e57;
+}
+
+/* モーダル */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: #f5f0e6;
+  border-radius: 12px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #2d1b1b;
+  color: #e8d4a0;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  opacity: 0.8;
+}
+
+.modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
+}
+
+.locations-heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #4a3c2a;
+}
+
+.locations-list {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+  color: #5a4a3a;
+  line-height: 1.6;
+}
+
+.locations-list li {
+  margin-bottom: 0.25rem;
+}
+
+.no-locations {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #6b5b4a;
+}
+
+.wiki-link {
+  display: inline-block;
+  color: #c9a227;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.wiki-link:hover {
+  text-decoration: underline;
+}
+
 .weapon-games {
   display: flex;
   gap: 0.35rem;

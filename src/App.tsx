@@ -4,11 +4,103 @@ import {
   searchComboWeapons,
   type Game,
 } from "./comboWeapons";
+import {
+  getItemLocations,
+  getItemWikiUrl,
+} from "./itemLocations";
 import "./App.css";
+
+function ClickableIngredient({
+  name,
+  onClick,
+}: {
+  name: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="ingredient-link"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      title="クリックで取得場所を表示"
+    >
+      {name}
+    </button>
+  );
+}
+
+function ItemLocationModal({
+  itemName,
+  onClose,
+}: {
+  itemName: string;
+  onClose: () => void;
+}) {
+  const locations = getItemLocations(itemName);
+  const wikiUrl = getItemWikiUrl(itemName);
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      role="button"
+      tabIndex={0}
+      aria-label="閉じる"
+    >
+      <div
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header">
+          <h2 className="modal-title">{itemName}</h2>
+          <button
+            type="button"
+            className="modal-close"
+            onClick={onClose}
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+          <h3 className="locations-heading">取得場所</h3>
+          {locations.length > 0 ? (
+            <ul className="locations-list">
+              {locations.map((loc, i) => (
+                <li key={i}>{loc}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="no-locations">
+              このアイテムの取得場所データはまだ登録されていません。
+              Wikiで確認してください。
+            </p>
+          )}
+
+          <a
+            href={wikiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="wiki-link"
+          >
+            Dead Rising Wiki で詳細を確認 →
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const [query, setQuery] = useState("");
   const [gameFilter, setGameFilter] = useState<Game | "">("");
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const results = useMemo(() => {
     const filter: Game | undefined = gameFilter || undefined;
@@ -53,7 +145,8 @@ function App() {
         {showAllOnEmpty ? (
           <p className="results-info">
             検索欄にアイテムを入力すると、その材料を含むコンボ武器の候補が表示されます。
-            未入力の場合は全{COMBO_WEAPONS.length}件を表示しています。
+            アイテム名をクリックで取得場所を表示。未入力の場合は全
+            {COMBO_WEAPONS.length}件を表示しています。
           </p>
         ) : (
           <p className="results-info">
@@ -63,10 +156,21 @@ function App() {
 
         <ul className="weapon-list">
           {displayResults.map((weapon) => (
-            <li key={`${weapon.name}-${weapon.games.join("-")}`} className="weapon-card">
+            <li
+              key={`${weapon.name}-${weapon.games.join("-")}`}
+              className="weapon-card"
+            >
               <div className="weapon-name">{weapon.name}</div>
               <div className="weapon-recipe">
-                {weapon.ingredient1} + {weapon.ingredient2}
+                <ClickableIngredient
+                  name={weapon.ingredient1}
+                  onClick={() => setSelectedItem(weapon.ingredient1)}
+                />
+                {" + "}
+                <ClickableIngredient
+                  name={weapon.ingredient2}
+                  onClick={() => setSelectedItem(weapon.ingredient2)}
+                />
               </div>
               <div className="weapon-games">
                 {weapon.games.map((g) => (
@@ -83,6 +187,13 @@ function App() {
           ))}
         </ul>
       </section>
+
+      {selectedItem && (
+        <ItemLocationModal
+          itemName={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
 
       <footer className="footer">
         <a
