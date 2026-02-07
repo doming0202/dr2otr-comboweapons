@@ -116,3 +116,31 @@ export function searchComboWeapons(
     return matchesIngredient && matchesGame;
   });
 }
+
+/** 全コンボ武器で使われている素材名の一覧（重複なし・ソート済み） */
+export function getAllIngredients(): string[] {
+  const set = new Set<string>();
+  for (const w of COMBO_WEAPONS) {
+    set.add(w.ingredient1);
+    set.add(w.ingredient2);
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "en"));
+}
+
+/**
+ * 指定した素材を使うコンボ武器を取得（素材からの逆引き）
+ * ingredient1 または ingredient2 が指定名と一致する武器を返す
+ */
+export function getComboWeaponsByIngredient(
+  ingredientName: string,
+  gameFilter?: Game
+): ComboWeapon[] {
+  if (!ingredientName.trim()) return [];
+  const name = ingredientName.trim();
+  return COMBO_WEAPONS.filter((weapon) => {
+    const matches =
+      weapon.ingredient1 === name || weapon.ingredient2 === name;
+    const matchesGame = !gameFilter || weapon.games.includes(gameFilter);
+    return matches && matchesGame;
+  });
+}

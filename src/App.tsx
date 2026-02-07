@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import {
   COMBO_WEAPONS,
   searchComboWeapons,
+  getAllIngredients,
+  getComboWeaponsByIngredient,
   type Game,
 } from "./comboWeapons";
 import {
@@ -16,7 +18,7 @@ import {
 } from "./areaComboWeapons";
 import "./App.css";
 
-type ViewMode = "search" | "area";
+type ViewMode = "search" | "area" | "material";
 
 function ClickableIngredient({
   name,
@@ -118,11 +120,54 @@ function ItemLocationModal({
   );
 }
 
+function WeaponCard({
+  weapon,
+  onSelectIngredient,
+  showCombinationLabel = false,
+}: {
+  weapon: { name: string; ingredient1: string; ingredient2: string; games: Game[] };
+  onSelectIngredient: (name: string) => void;
+  showCombinationLabel?: boolean;
+}) {
+  return (
+    <li
+      key={`${weapon.name}-${weapon.games.join("-")}`}
+      className="weapon-card"
+    >
+      <div className="weapon-name">{weapon.name}</div>
+      <div className="weapon-recipe">
+        {showCombinationLabel && <span className="recipe-label">組み合わせ: </span>}
+        <ClickableIngredient
+          name={weapon.ingredient1}
+          onClick={() => onSelectIngredient(weapon.ingredient1)}
+        />
+        {" + "}
+        <ClickableIngredient
+          name={weapon.ingredient2}
+          onClick={() => onSelectIngredient(weapon.ingredient2)}
+        />
+      </div>
+      <div className="weapon-games">
+        {weapon.games.map((g) => (
+          <span
+            key={g}
+            className={`game-badge ${g}`}
+            title={g === "DR2" ? "Dead Rising 2" : "Off the Record"}
+          >
+            {g}
+          </span>
+        ))}
+      </div>
+    </li>
+  );
+}
+
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
   const [query, setQuery] = useState("");
   const [gameFilter, setGameFilter] = useState<Game | "">("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<string>("");
 
   const results = useMemo(() => {
     const filter: Game | undefined = gameFilter || undefined;
@@ -133,6 +178,14 @@ function App() {
     const filter: Game | undefined = gameFilter || undefined;
     return getComboWeaponsByAllAreas(filter);
   }, [gameFilter]);
+
+  const ingredients = useMemo(() => getAllIngredients(), []);
+
+  const materialWeapons = useMemo(() => {
+    if (!selectedMaterial.trim()) return [];
+    const filter: Game | undefined = gameFilter || undefined;
+    return getComboWeaponsByIngredient(selectedMaterial, filter);
+  }, [selectedMaterial, gameFilter]);
 
   const showAllOnEmpty = query.trim() === "";
   const displayResults = showAllOnEmpty ? COMBO_WEAPONS : results;
@@ -156,6 +209,13 @@ function App() {
         </button>
         <button
           type="button"
+          className={`view-tab ${viewMode === "material" ? "active" : ""}`}
+          onClick={() => setViewMode("material")}
+        >
+          素材から探す
+        </button>
+        <button
+          type="button"
           className={`view-tab ${viewMode === "area" ? "active" : ""}`}
           onClick={() => setViewMode("area")}
         >
@@ -164,25 +224,55 @@ function App() {
       </section>
 
       <section className="search-section">
-        <div className="search-box">
-          <input
-            type="text"
-            className="search-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="アイテム名を入力（例: Chainsaw, Dynamite, Battery）"
-            autoFocus
-          />
-          <select
-            className="game-filter"
-            value={gameFilter}
-            onChange={(e) => setGameFilter(e.target.value as Game | "")}
-          >
-            <option value="">全作品</option>
-            <option value="DR2">Dead Rising 2 のみ</option>
-            <option value="OTR">Off the Record のみ</option>
-          </select>
-        </div>
+        {viewMode === "material" ? (
+          <div className="search-box material-select-box">
+            <label htmlFor="material-select" className="material-label">
+              素材を選択
+            </label>
+            <select
+              id="material-select"
+              className="material-select"
+              value={selectedMaterial}
+              onChange={(e) => setSelectedMaterial(e.target.value)}
+            >
+              <option value="">-- 素材を選んでください --</option>
+              {ingredients.map((ing) => (
+                <option key={ing} value={ing}>
+                  {ing}
+                </option>
+              ))}
+            </select>
+            <select
+              className="game-filter"
+              value={gameFilter}
+              onChange={(e) => setGameFilter(e.target.value as Game | "")}
+            >
+              <option value="">全作品</option>
+              <option value="DR2">Dead Rising 2 のみ</option>
+              <option value="OTR">Off the Record のみ</option>
+            </select>
+          </div>
+        ) : (
+          <div className="search-box">
+            <input
+              type="text"
+              className="search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="アイテム名を入力（例: Chainsaw, Dynamite, Battery）"
+              autoFocus
+            />
+            <select
+              className="game-filter"
+              value={gameFilter}
+              onChange={(e) => setGameFilter(e.target.value as Game | "")}
+            >
+              <option value="">全作品</option>
+              <option value="DR2">Dead Rising 2 のみ</option>
+              <option value="OTR">Off the Record のみ</option>
+            </select>
+          </div>
+        )}
       </section>
 
       <section className="results-section">
@@ -202,36 +292,39 @@ function App() {
 
             <ul className="weapon-list">
               {displayResults.map((weapon) => (
-                <li
+                <WeaponCard
                   key={`${weapon.name}-${weapon.games.join("-")}`}
-                  className="weapon-card"
-                >
-                  <div className="weapon-name">{weapon.name}</div>
-                  <div className="weapon-recipe">
-                    <ClickableIngredient
-                      name={weapon.ingredient1}
-                      onClick={() => setSelectedItem(weapon.ingredient1)}
-                    />
-                    {" + "}
-                    <ClickableIngredient
-                      name={weapon.ingredient2}
-                      onClick={() => setSelectedItem(weapon.ingredient2)}
-                    />
-                  </div>
-                  <div className="weapon-games">
-                    {weapon.games.map((g) => (
-                      <span
-                        key={g}
-                        className={`game-badge ${g}`}
-                        title={g === "DR2" ? "Dead Rising 2" : "Off the Record"}
-                      >
-                        {g}
-                      </span>
-                    ))}
-                  </div>
-                </li>
+                  weapon={weapon}
+                  onSelectIngredient={setSelectedItem}
+                  showCombinationLabel
+                />
               ))}
             </ul>
+          </>
+        ) : viewMode === "material" ? (
+          <>
+            <p className="results-info">
+              素材を選ぶと、その素材で作れるコンボ武器の候補が表示されます。組み合わせ（もう1つの素材）も表示しています。
+            </p>
+            {selectedMaterial ? (
+              <>
+                <p className="results-info material-result-count">
+                  「{selectedMaterial}」で作れるコンボ武器: {materialWeapons.length}件
+                </p>
+                <ul className="weapon-list">
+                  {materialWeapons.map((weapon) => (
+                    <WeaponCard
+                      key={`${weapon.name}-${weapon.games.join("-")}`}
+                      weapon={weapon}
+                      onSelectIngredient={setSelectedItem}
+                      showCombinationLabel
+                    />
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="no-results-hint">上で素材を選択してください。</p>
+            )}
           </>
         ) : (
           <div className="area-section">
@@ -250,42 +343,12 @@ function App() {
                     {weapons.length > 0 ? (
                       <ul className="weapon-list area-weapon-list">
                         {weapons.map((weapon) => (
-                          <li
+                          <WeaponCard
                             key={`${weapon.name}-${weapon.games.join("-")}`}
-                            className="weapon-card"
-                          >
-                            <div className="weapon-name">{weapon.name}</div>
-                            <div className="weapon-recipe">
-                              <ClickableIngredient
-                                name={weapon.ingredient1}
-                                onClick={() =>
-                                  setSelectedItem(weapon.ingredient1)
-                                }
-                              />
-                              {" + "}
-                              <ClickableIngredient
-                                name={weapon.ingredient2}
-                                onClick={() =>
-                                  setSelectedItem(weapon.ingredient2)
-                                }
-                              />
-                            </div>
-                            <div className="weapon-games">
-                              {weapon.games.map((g) => (
-                                <span
-                                  key={g}
-                                  className={`game-badge ${g}`}
-                                  title={
-                                    g === "DR2"
-                                      ? "Dead Rising 2"
-                                      : "Off the Record"
-                                  }
-                                >
-                                  {g}
-                                </span>
-                              ))}
-                            </div>
-                          </li>
+                            weapon={weapon}
+                            onSelectIngredient={setSelectedItem}
+                            showCombinationLabel
+                          />
                         ))}
                       </ul>
                     ) : (

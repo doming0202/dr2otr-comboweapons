@@ -132,6 +132,45 @@
   outline: none;
 }
 
+.material-select-box {
+  align-items: center;
+}
+
+.material-label {
+  font-size: 0.95rem;
+  color: #4a3c2a;
+  font-weight: 500;
+}
+
+.material-select {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #4a3c2a;
+  border-radius: 8px;
+  background: #f5f0e6;
+  color: #1a1a1a;
+  cursor: pointer;
+  outline: none;
+}
+
+.material-result-count {
+  font-weight: 600;
+}
+
+.no-results-hint {
+  color: #6b5b4a;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.recipe-label {
+  color: #6b5b4a;
+  font-size: 0.85em;
+  margin-right: 0.25rem;
+}
+
 .results-section {
   background: rgba(245, 240, 230, 0.95);
   border-radius: 12px;
