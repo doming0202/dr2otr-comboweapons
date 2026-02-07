@@ -5,21 +5,6 @@
 
 const WIKI_BASE = "https://deadrising.fandom.com/wiki/";
 
-// エリア名の定義（メンテナンス性を考慮）
-const AREAS = {
-  AMERICANA: "Americana Casino - Restroom Area",
-  ATLANTICA: "Atlantica Casino - Rooftop",
-  FOOD_COURT: "Food Court - Upper Platforms",
-  FORTUNE_PARK: "Fortune Park - Maintenance Room 12",
-  PLATINUM_STRIP: "Platinum Strip - Cinema Rooftop",
-  SAFE_HOUSE: "Safe House",
-  SILVER_STRIP: "Silver Strip - Main Area",
-  SILVER_STRIP_MR19: "Silver Strip - Maintenance Room 19",
-  SILVER_STRIP_TINKER: "Silver Strip - Tinkerbox (N103)",
-  SOUTH_PLAZA: "South Plaza - Main Floor/Upper Platforms",
-  UNDERGROUND: "Underground - Secret Lab/Warehouse A, B, E"
-} as const;
-
 /** アイテム名 → 取得場所一覧のマップ */
 export const ITEM_LOCATIONS: Record<string, string[]> = {
   "2\" x 4\"": [
