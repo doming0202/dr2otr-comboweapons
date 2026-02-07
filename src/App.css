@@ -264,7 +264,17 @@
 }
 
 .locations-list li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.location-area-info {
+  display: inline;
+  color: #6b5b4a;
+  font-size: 0.85em;
+}
+
+.location-area-info small {
+  font-weight: 500;
 }
 
 .no-locations {

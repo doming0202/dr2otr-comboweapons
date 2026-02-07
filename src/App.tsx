@@ -8,6 +8,7 @@ import {
   getItemLocations,
   getItemWikiUrl,
 } from "./itemLocations";
+import { enrichLocationWithAreaInfo } from "./areaShopInfo";
 import {
   MAIN_AREAS,
   getComboWeaponsByAllAreas,
@@ -79,9 +80,22 @@ function ItemLocationModal({
           <h3 className="locations-heading">取得場所</h3>
           {locations.length > 0 ? (
             <ul className="locations-list">
-              {locations.map((loc, i) => (
-                <li key={i}>{loc}</li>
-              ))}
+              {locations.map((loc, i) => {
+                const { text, info } = enrichLocationWithAreaInfo(loc);
+                return (
+                  <li key={i}>
+                    {text}
+                    {info && (
+                      <span className="location-area-info" title={`${info.building} - ${info.shopName}`}>
+                        {" "}
+                        <small>
+                          [{info.building} / {info.shopName} ({info.shopType})]
+                        </small>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="no-locations">

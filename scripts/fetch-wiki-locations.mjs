@@ -1,7 +1,17 @@
 /**
  * Dead Rising Wiki からアイテム取得場所をスクレイプ
- * 実行: node scripts/fetch-wiki-locations.mjs
+ * Locations セクションのうち、Dead Rising 2 / Off the Record が
+ * 記載されているサブセクションのみを対象（Case Zero / Case West は除外）
+ * 実行: pnpm wiki:fetch または node scripts/fetch-wiki-locations.mjs
  * 出力: scripts/wiki-locations.json
+ *
+ * 出力構造（ゲームタイトル → 場所リスト）:
+ *   {
+ *     "Item Name": {
+ *       "Dead Rising 2": ["場所1", "場所2", "場所3"],
+ *       "Off the Record": ["場所1", "場所2"]
+ *     }
+ *   }
  */
 
 const WIKI_BASE = "https://deadrising.fandom.com/wiki/";
@@ -59,47 +69,82 @@ function extractTextFromHtml(html) {
     .trim();
 }
 
-/** Locations セクションをパースして取得場所の配列を返す（HTML対応） */
-function parseLocationsSection(html) {
-  const locations = [];
-  const seen = new Set();
-  // Fandom/MediaWiki: <h2>内に<span id="Locations">等でLocationsが含まれる
-  // または Markdown風: ## Locations
-  let section = null;
-  const htmlMatch = html.match(/<h2[^>]*>[\s\S]*?Locations[\s\S]*?<\/h2>([\s\S]*?)(?=<h2\b|$)/i);
-  const mdMatch = html.match(/##\s*Locations[\s\S]*?(?=##\s+[A-Za-z]|$)/i);
-  if (htmlMatch) section = htmlMatch[1];
-  else if (mdMatch) section = mdMatch[0];
-  if (!section) return locations;
+/** DR2/OTR 関連のサブセクションか判定（Case Zero / Case West は除外） */
+function isDr2OtrSection(headingText) {
+  const t = headingText.toLowerCase();
+  if (t.includes("case zero") || t.includes("case west")) return false;
+  return t.includes("dead rising 2") || t.includes("off the record");
+}
 
-  // <li>...</li> を抽出
-  const liMatches = section.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi);
-  for (const m of liMatches) {
-    const raw = m[1];
-    const text = extractTextFromHtml(raw);
-    if (text && text.length > 2 && !seen.has(text)) {
-      seen.add(text);
-      locations.push(text);
-    }
-  }
-  // <li>が見つからない場合: Markdown形式 (* で始まる行) を試す
-  if (locations.length === 0) {
-    const lines = section.split(/\r?\n/);
-    for (const line of lines) {
-      const bulletMatch = line.match(/^\s*[*\-]\s+(.+)/);
-      if (bulletMatch) {
-        let text = bulletMatch[1]
-          .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-          .replace(/\s+/g, " ")
-          .trim();
-        if (text && text.length > 2 && !seen.has(text)) {
-          seen.add(text);
-          locations.push(text);
+/** 目次・見出し・攻撃説明などを除外し、実際の取得場所か判定 */
+function isValidLocationText(text) {
+  const t = text.trim();
+  if (!t || t.length < 10) return false;
+  // 目次パターン: "1 Attacks", "2.1 Dead Rising 2", "2 Locations 2.1 Case Zero" 等
+  if (/^\d+(\.\d+)*\s+(Attacks|Locations|Trivia|Gallery|References|Recipes|Attack|Video)/i.test(t))
+    return false;
+  if (/^(Attacks|Locations|Trivia|Gallery|References|Recipes|Attack|Video)\s*$/i.test(t))
+    return false;
+  if (/^\d+\.\d+\s+(Case Zero|Dead Rising|Off the Record|Case West)/i.test(t))
+    return false;
+  if (/^\d+\s+(Attacks|Locations|Trivia|Gallery|References)/i.test(t))
+    return false;
+  // 攻撃説明 "Main:", "Alternate:", "Combo:"
+  if (/^(Main|Alternate|Combo):/i.test(t)) return false;
+  // "2 Locations 2.1..." のような目次行
+  if (/^2\s+Locations\s+2\.\d+/i.test(t)) return false;
+  return true;
+}
+
+/**
+ * Locations セクションから DR2/OTR 記載部分をパース
+ * ゲームタイトル（h3）ごとに場所リストを返す
+ * 戻り値: { "Dead Rising 2": ["場所1","場所2"], "Off the Record": ["場所1"] }
+ */
+function parseLocationsSection(html) {
+  const byGame = {};
+  const seen = new Set();
+
+  // Locations セクションを取得（h2 Locations から次の h2 まで）
+  const sectionMatch = html.match(
+    /<h2[^>]*>[\s\S]*?Locations[\s\S]*?<\/h2>([\s\S]*?)(?=<h2\b|$)/i
+  );
+  if (!sectionMatch) return byGame;
+
+  const section = sectionMatch[1];
+
+  // h3 で分割：ゲームタイトルごとに ・場所1 ・場所2 ・場所3 の構造
+  const h3Blocks = section.split(/<h3[^>]*>/i);
+
+  for (let i = 1; i < h3Blocks.length; i++) {
+    const block = h3Blocks[i];
+    const headingEnd = block.indexOf("</h3>");
+    const headingHtml = headingEnd >= 0 ? block.slice(0, headingEnd) : "";
+    const headingText = extractTextFromHtml(headingHtml);
+    const content = headingEnd >= 0 ? block.slice(headingEnd + 5) : block;
+
+    // Case Zero / Case West はスキップ、DR2/OTR のみ
+    if (!isDr2OtrSection(headingText)) continue;
+
+    // ゲーム名を正規化（"Dead Rising 2 and Off the Record" は両方に分配するか、そのまま1キーに）
+    const gameKey = headingText.trim();
+    if (!byGame[gameKey]) byGame[gameKey] = [];
+
+    const liMatches = content.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi);
+    for (const m of liMatches) {
+      const raw = m[1];
+      const text = extractTextFromHtml(raw);
+      if (text && isValidLocationText(text)) {
+        const dedupKey = `${gameKey}\0${text}`;
+        if (!seen.has(dedupKey)) {
+          seen.add(dedupKey);
+          byGame[gameKey].push(text);
         }
       }
     }
   }
-  return locations;
+
+  return byGame;
 }
 
 /** コンボ武器の材料（ユニーク、comboWeapons.ts から抽出） */
@@ -164,19 +209,20 @@ async function main() {
       const slug = getWikiSlug(item);
       // MediaWiki API を優先（FandomはSPAでHTMLから取得できない場合がある）
       let html = await fetchViaApi(slug);
-      let locations = html ? parseLocationsSection(html) : [];
+      let byGame = html ? parseLocationsSection(html) : {};
       // API失敗時は直接HTMLを取得
-      if (locations.length === 0) {
+      if (Object.keys(byGame).length === 0) {
         html = await fetchWikiPage(url);
-        if (html) locations = parseLocationsSection(html);
+        if (html) byGame = parseLocationsSection(html);
       }
       if (!html) {
         process.stderr.write("404 or error\n");
         continue;
       }
-      if (locations.length > 0) {
-        results[item] = locations;
-        process.stderr.write(`${locations.length} locations\n`);
+      const totalLocs = Object.values(byGame).flat().length;
+      if (totalLocs > 0) {
+        results[item] = byGame;
+        process.stderr.write(`${Object.keys(byGame).join(", ")}: ${totalLocs} locations\n`);
       } else {
         process.stderr.write("no locations found\n");
       }
