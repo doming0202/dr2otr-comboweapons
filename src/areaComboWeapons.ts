@@ -8,32 +8,40 @@ import { getItemLocations } from "./itemLocations";
 
 /** 主要エリア一覧（表示名） */
 export const MAIN_AREAS = [
-  "Fortune City",
+  "AMERICANA CASINO",
+  "ATLANTIC CASINO",
+  "FOOD COURT",
+  "FORTUNE CITY ARENA",
+  "FORTUNE CITY HOTEL",
+  "FORTUNE PARK",
+  "PALISADES MALL",
+  "PLATINUM STRIP",
   "Royal Flush Plaza",
-  "Maintenance Room",
-  "Palisades Mall",
-  "Fortune City Emergency Shelter",
-  "Hot Excitorama",
-  "Fortune City Bank",
-  "Yucatan Casino",
+  "SILVER STRIP",
+  "SLOT RANCH CASINO",
+  "SOUTH PLAZA",
+  "UNDERGROUND",
+  "YUCATAN CASINO",
 ] as const;
 
 export type MainArea = (typeof MAIN_AREAS)[number];
 
 /** エリア名の別名・部分一致用キーワード（表示名 -> マッチするキーワード） */
 const AREA_KEYWORDS: Record<MainArea, string[]> = {
-  "Fortune City": ["Fortune City", "Fortune Park", "Fortune City Arena", "Fortune City Hotel"],
+  "AMERICANA CASINO": ["Americana Casino", "Americana"],
+  "ATLANTIC CASINO": ["Atlantic Casino", "Atlantica Casino", "Atlantica"],
+  "FOOD COURT": ["Food Court"],
+  "FORTUNE CITY ARENA": ["Fortune City Arena", "Fortune City Arena security"],
+  "FORTUNE CITY HOTEL": ["Fortune City Hotel"],
+  "FORTUNE PARK": ["Fortune Park"],
+  "PALISADES MALL": ["Palisades Mall", "Palisades"],
+  "PLATINUM STRIP": ["Platinum Strip", "Platinum Strip main"],
   "Royal Flush Plaza": ["Royal Flush Plaza", "Royal Flush"],
-  "Maintenance Room": ["Maintenance Room", "Maintenance Hall", "Maintenance halls"],
-  "Palisades Mall": ["Palisades Mall", "Palisades"],
-  "Fortune City Emergency Shelter": [
-    "Safe House",
-    "Emergency Shelter",
-    "Fortune City Emergency Shelter",
-  ],
-  "Hot Excitorama": ["Hot Excitorama", "Excitorama"],
-  "Fortune City Bank": ["Bank", "Vault", "Fortune City Bank", "Security Offices"],
-  "Yucatan Casino": ["Yucatan Casino", "Yucatan"],
+  "SILVER STRIP": ["Silver Strip"],
+  "SLOT RANCH CASINO": ["Slot Ranch Casino", "Slot Ranch"],
+  "SOUTH PLAZA": ["South Plaza"],
+  "UNDERGROUND": ["Underground"],
+  "YUCATAN CASINO": ["Yucatan Casino", "Yucatan"],
 };
 
 /** アイテムが指定エリアで取得可能か */
