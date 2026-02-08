@@ -84,6 +84,7 @@ function ItemLocationModal({
             <ul className="locations-list">
               {locations.map((loc, i) => {
                 const { text, info, areaCode } = enrichLocationWithAreaInfo(loc);
+                const alreadyHasCode = areaCode != null && text.includes(areaCode);
                 return (
                   <li key={i}>
                     {text}
@@ -91,7 +92,9 @@ function ItemLocationModal({
                       <span className="location-area-info">
                         {" "}
                         <small>
-                          {areaCode} [{info.building} / {info.shopName} ({info.shopType})]
+                          {alreadyHasCode
+                            ? `[${info.building} / ${info.shopName} (${info.shopType})]`
+                            : `${areaCode} [${info.building} / ${info.shopName} (${info.shopType})]`}
                         </small>
                       </span>
                     )}
