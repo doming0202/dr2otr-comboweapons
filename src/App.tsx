@@ -88,9 +88,11 @@ function ItemLocationModal({
                   <li key={i}>
                     {text}
                     {info && areaCode && (
-                      <span className="location-area-info" title={`${info.building} / ${info.shopName} (${info.shopType})`}>
+                      <span className="location-area-info">
                         {" "}
-                        <small>{areaCode}[省略]</small>
+                        <small>
+                          {areaCode} [{info.building} / {info.shopName} ({info.shopType})]
+                        </small>
                       </span>
                     )}
                   </li>
