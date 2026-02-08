@@ -112,6 +112,18 @@ export const AREA_SHOP_MAP: Record<string, AreaShopInfo> = {
   N111: { building: "SILVER STRIP", shopName: "Juggz Bar & Grill Kiosk", shopType: "アルコール" },
   Y101: { building: "YUCATAN CASINO", shopName: "Baron Von Brathaus", shopType: "食料品" },
   Y102: { building: "YUCATAN CASINO", shopName: "Shoal Nightclub", shopType: "酒類" },
+  U101: { building: "URANUS ZONE", shopName: "From Fortune with Love", shopType: "土産物屋" },
+  U102: { building: "URANUS ZONE", shopName: "Jump Space 7", shopType: "食事処" },
+  U103: { building: "URANUS ZONE", shopName: "Astonishing Illusions", shopType: "玩具店" },
+  U104: { building: "URANUS ZONE", shopName: "The Man's Sport", shopType: "スポーツ用品店" },
+  U105: { building: "URANUS ZONE", shopName: "Bagged!", shopType: "鞄屋" },
+  U106: { building: "URANUS ZONE", shopName: "Players", shopType: "CD屋" },
+  U107: { building: "URANUS ZONE", shopName: "Coming Soon!", shopType: "コースター" },
+  U108: { building: "URANUS ZONE", shopName: "Lombardi's", shopType: "お菓子屋" },
+  U109: { building: "URANUS ZONE", shopName: "Fortune City Bank", shopType: "銀行" },
+  U110: { building: "URANUS ZONE", shopName: "Rocket Red Glare", shopType: "花火店" },
+  U111: { building: "URANUS ZONE", shopName: "The Venus Touch", shopType: "化粧品売り場" },
+  U112: { building: "URANUS ZONE", shopName: "Space", shopType: "服飾店" },
 };
 
 /** エリアコードに一致する正規表現（P107, A101, R114 などを検出） */
@@ -172,23 +184,35 @@ function findInfoByShopName(location: string): AreaShopInfo | null {
 /**
  * 取得場所テキストから建物・店舗情報を取得する
  * エリアコード（R101等）と店舗名の両方に対応
+ * 店舗に一致した場合は areaCode を返し、表示を「エリアコード[省略]」形式にできる
  */
-export function enrichLocationWithAreaInfo(location: string): { text: string; info: AreaShopInfo | null } {
+export function enrichLocationWithAreaInfo(location: string): {
+  text: string;
+  info: AreaShopInfo | null;
+  areaCode: string | null;
+} {
   // 1. エリアコードで検索（従来方式・優先）
   const codeMatch = location.match(AREA_CODE_PATTERN);
   if (codeMatch) {
     const areaCode = codeMatch[0].toUpperCase();
     const info = AREA_SHOP_MAP[areaCode] ?? null;
     if (info) {
-      return { text: location, info: { ...info } };
+      return { text: location, info: { ...info }, areaCode };
     }
   }
 
   // 2. 店舗名で検索（R101 なし・店名のみ表記など）
   const infoByShop = findInfoByShopName(location);
   if (infoByShop) {
-    return { text: location, info: infoByShop };
+    const areaCode =
+      Object.entries(AREA_SHOP_MAP).find(
+        ([, v]) =>
+          v.building === infoByShop.building &&
+          v.shopName === infoByShop.shopName &&
+          v.shopType === infoByShop.shopType
+      )?.[0] ?? null;
+    return { text: location, info: infoByShop, areaCode };
   }
 
-  return { text: location, info: null };
+  return { text: location, info: null, areaCode: null };
 }

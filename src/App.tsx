@@ -83,16 +83,14 @@ function ItemLocationModal({
           {locations.length > 0 ? (
             <ul className="locations-list">
               {locations.map((loc, i) => {
-                const { text, info } = enrichLocationWithAreaInfo(loc);
+                const { text, info, areaCode } = enrichLocationWithAreaInfo(loc);
                 return (
                   <li key={i}>
                     {text}
-                    {info && (
-                      <span className="location-area-info" title={`${info.building} - ${info.shopName}`}>
+                    {info && areaCode && (
+                      <span className="location-area-info" title={`${info.building} / ${info.shopName} (${info.shopType})`}>
                         {" "}
-                        <small>
-                          [{info.building} / {info.shopName} ({info.shopType})]
-                        </small>
+                        <small>{areaCode}[省略]</small>
                       </span>
                     )}
                   </li>
