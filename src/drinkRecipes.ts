@@ -32,15 +32,15 @@ export function getDrinkColor(drinkName: string): string | null {
 
 /** ゲーム内のドリンク効果（名称 → 効果説明）。ミックスジュース一覧に準拠 */
 export const DRINK_EFFECTS: Record<string, string> = {
-  Energizer: "スタミナ（緑ゲージ）を回復",
-  Nectar: "取得できるお金が2倍になる",
+  Energizer: "被ダメージを無効化",
+  Nectar: "周囲に女王蜂が出現",
   "Quick Step": "移動速度が上昇",
-  Randomizer: "ランダムな効果が発動",
-  Spitfire: "攻撃が炎属性になる",
-  Untouchable: "一定時間ダメージを受けない（無敵）",
-  Zombait: "ゾンビがプレイヤーに引き寄せられる",
-  "Pain Killer": "受けるダメージを軽減",
-  Repulse: "近くのゾンビを弾き飛ばす",
+  Randomizer: "嘔吐状態になる 稀に他のミックスジュースの効果",
+  Spitfire: "素手状態でAIM時攻撃で炎を吐く",
+  Untouchable: "ゾンビに組み付かれなくなる（攻撃はしてくる）",
+  Zombait: "ゾンビが自キャラを狙ってくる",
+  "Pain Killer": "被ダメージが半減",
+  Repulse: "ゾンビに見つからなくなる",
 };
 
 /** ドリンク名に対応する効果説明を返す。未定義なら null */
