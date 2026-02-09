@@ -117,6 +117,20 @@ function ItemLocationModal({
           >
             Dead Rising Wiki で詳細を確認 →
           </a>
+          {locations.some((loc) => {
+            const { text } = enrichLocationWithAreaInfo(loc);
+            return text.includes("Maintenance Room");
+          }) && (
+            <a
+              href="https://deadrising.fandom.com/wiki/Maintenance_Room#Dead_Rising_2_2"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wiki-link"
+              style={{ display: "block", marginTop: "0.5rem" }}
+            >
+              メンテナンスルーム →
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -379,6 +393,14 @@ function App() {
           rel="noopener noreferrer"
         >
           参考: Dead Rising Wiki
+        </a>
+        {" | "}
+        <a
+          href="https://deadrising.fandom.com/wiki/Maintenance_Room#Dead_Rising_2_2"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          メンテナンスルーム
         </a>
       </footer>
     </main>
