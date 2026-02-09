@@ -20,6 +20,7 @@ import {
   getRecipesByIngredient,
   getAllDrinkIngredients,
   getDrinkColor,
+  getDrinkEffect,
 } from "./drinkRecipes";
 import "./App.css";
 
@@ -404,11 +405,19 @@ function App() {
                         {drinkCandidates.map((row, i) => (
                           <tr key={`${row.name}-${row.ingredientB}-${i}`}>
                             <td
-                              className="drink-name"
+                              className={
+                                getDrinkEffect(row.name)
+                                  ? "drink-name drink-name--with-tooltip"
+                                  : "drink-name"
+                              }
                               style={
                                 getDrinkColor(row.name)
                                   ? { color: getDrinkColor(row.name)! }
                                   : undefined
+                              }
+                              title={getDrinkEffect(row.name) ?? undefined}
+                              data-drink-effect={
+                                getDrinkEffect(row.name) ?? undefined
                               }
                             >
                               {row.name}

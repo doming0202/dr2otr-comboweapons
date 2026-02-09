@@ -204,6 +204,33 @@
   color: #e8dcc8;
 }
 
+.drink-candidates-table .drink-name--with-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.drink-candidates-table .drink-name--with-tooltip[data-drink-effect]:hover::after {
+  content: attr(data-drink-effect);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  min-width: 12rem;
+  max-width: 20rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #f0ebe0;
+  background: #3d3329;
+  border: 1px solid #5a4a3a;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  white-space: normal;
+  z-index: 10;
+  pointer-events: none;
+}
+
 .drink-candidates-table .ingredient-link {
   color: #b8d4e8;
 }
