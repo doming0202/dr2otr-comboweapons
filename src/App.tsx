@@ -19,6 +19,7 @@ import {
 import {
   getRecipesByIngredient,
   getAllDrinkIngredients,
+  getDrinkColor,
 } from "./drinkRecipes";
 import "./App.css";
 
@@ -402,7 +403,16 @@ function App() {
                       <tbody>
                         {drinkCandidates.map((row, i) => (
                           <tr key={`${row.name}-${row.ingredientB}-${i}`}>
-                            <td className="drink-name">{row.name}</td>
+                            <td
+                              className="drink-name"
+                              style={
+                                getDrinkColor(row.name)
+                                  ? { color: getDrinkColor(row.name)! }
+                                  : undefined
+                              }
+                            >
+                              {row.name}
+                            </td>
                             <td>
                               <ClickableIngredient
                                 name={row.ingredientB}

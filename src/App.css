@@ -163,8 +163,8 @@
   overflow-x: auto;
   margin-top: 0.75rem;
   border-radius: 8px;
-  border: 2px solid #4a3c2a;
-  background: rgba(245, 240, 230, 0.15);
+  border: 2px solid #5a4a3a;
+  background: rgba(45, 35, 28, 0.25);
 }
 
 .drink-candidates-table {
@@ -177,12 +177,13 @@
 .drink-candidates-table td {
   padding: 0.6rem 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(74, 60, 42, 0.4);
+  border-bottom: 1px solid rgba(90, 74, 58, 0.5);
+  color: #f0ebe0;
 }
 
 .drink-candidates-table th {
-  background: rgba(201, 162, 39, 0.35);
-  color: #e8d4a0;
+  background: #5a4a3a;
+  color: #e8dcc8;
   font-weight: 600;
 }
 
@@ -190,13 +191,25 @@
   border-bottom: none;
 }
 
-.drink-candidates-table tbody tr:hover {
-  background: rgba(245, 240, 230, 0.08);
+.drink-candidates-table tbody tr:nth-child(even) td {
+  background: rgba(74, 60, 42, 0.2);
+}
+
+.drink-candidates-table tbody tr:hover td {
+  background: rgba(90, 74, 58, 0.35);
 }
 
 .drink-candidates-table .drink-name {
-  font-weight: 500;
-  color: #e8d4a0;
+  font-weight: 600;
+  color: #e8dcc8;
+}
+
+.drink-candidates-table .ingredient-link {
+  color: #b8d4e8;
+}
+
+.drink-candidates-table .ingredient-link:hover {
+  color: #e8dcc8;
 }
 
 .no-results-hint {

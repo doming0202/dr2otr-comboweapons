@@ -12,6 +12,24 @@ export interface DrinkRecipe {
   games: Game[];
 }
 
+/** ゲーム内のドリンク色（名称 → 文字色）。ミックスジュース一覧に準拠 */
+export const DRINK_COLORS: Record<string, string> = {
+  Energizer: "#4caf50",       // 緑
+  Nectar: "#fdd835",         // 黄
+  "Quick Step": "#ffffff",   // 白
+  Randomizer: "#78909c",     // 黒（暗い背景で見えるよう明るめグレー）
+  Spitfire: "#2196f3",       // 青
+  Untouchable: "#ff5722",    // 赤
+  Zombait: "#e91e63",        // 桃
+  "Pain Killer": "#00bcd4",  // 水色
+  Repulse: "#9c27b0",        // 紫
+};
+
+/** ドリンク名に対応するゲーム内の文字色を返す。未定義なら null */
+export function getDrinkColor(drinkName: string): string | null {
+  return DRINK_COLORS[drinkName] ?? null;
+}
+
 // データを解析して追加
 export const DRINK_RECIPES: DrinkRecipe[] = [
   // === Energizer ===
