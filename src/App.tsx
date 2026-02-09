@@ -16,9 +16,13 @@ import {
   getComboWeaponsByAllAreas,
   type MainArea,
 } from "./areaComboWeapons";
+import {
+  getRecipesByIngredient,
+  getAllDrinkIngredients,
+} from "./drinkRecipes";
 import "./App.css";
 
-type ViewMode = "search" | "area" | "material";
+type ViewMode = "search" | "area" | "material" | "drink";
 
 function ClickableIngredient({
   name,
@@ -197,6 +201,13 @@ function App() {
   }, [gameFilter]);
 
   const ingredients = useMemo(() => getAllIngredients(), []);
+  const drinkIngredients = useMemo(() => getAllDrinkIngredients(), []);
+  const [selectedDrinkIngredient, setSelectedDrinkIngredient] = useState<string>("");
+
+  const drinkCandidates = useMemo(() => {
+    if (!selectedDrinkIngredient.trim()) return [];
+    return getRecipesByIngredient(selectedDrinkIngredient);
+  }, [selectedDrinkIngredient]);
 
   const materialWeapons = useMemo(() => {
     if (!selectedMaterial.trim()) return [];
@@ -238,10 +249,36 @@ function App() {
         >
           エリア別
         </button>
+        <button
+          type="button"
+          className={`view-tab ${viewMode === "drink" ? "active" : ""}`}
+          onClick={() => setViewMode("drink")}
+        >
+          ドリンク
+        </button>
       </section>
 
       <section className="search-section">
-        {viewMode === "material" ? (
+        {viewMode === "drink" ? (
+          <div className="search-box material-select-box">
+            <label htmlFor="drink-ingredient-select" className="material-label">
+              材料A
+            </label>
+            <select
+              id="drink-ingredient-select"
+              className="material-select"
+              value={selectedDrinkIngredient}
+              onChange={(e) => setSelectedDrinkIngredient(e.target.value)}
+            >
+              <option value="">-- 材料Aを選んでください --</option>
+              {drinkIngredients.map((ing) => (
+                <option key={ing} value={ing}>
+                  {ing}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : viewMode === "material" ? (
           <div className="search-box material-select-box">
             <label htmlFor="material-select" className="material-label">
               素材を選択
@@ -341,6 +378,48 @@ function App() {
               </>
             ) : (
               <p className="no-results-hint">上で素材を選択してください。</p>
+            )}
+          </>
+        ) : viewMode === "drink" ? (
+          <>
+            <p className="results-info">
+              材料Aを選ぶと、その材料で作れるドリンクの候補と、組み合わせる材料Bを表示します。
+            </p>
+            {selectedDrinkIngredient ? (
+              <>
+                <p className="results-info material-result-count">
+                  「{selectedDrinkIngredient}」で作れるドリンク: {drinkCandidates.length}件
+                </p>
+                {drinkCandidates.length > 0 ? (
+                  <div className="drink-candidates-table-wrap">
+                    <table className="drink-candidates-table">
+                      <thead>
+                        <tr>
+                          <th>候補ドリンク</th>
+                          <th>材料B</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {drinkCandidates.map((row, i) => (
+                          <tr key={`${row.name}-${row.ingredientB}-${i}`}>
+                            <td className="drink-name">{row.name}</td>
+                            <td>
+                              <ClickableIngredient
+                                name={row.ingredientB}
+                                onClick={() => setSelectedItem(row.ingredientB)}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="no-results-hint">この材料で作れるドリンクはありません。</p>
+                )}
+              </>
+            ) : (
+              <p className="no-results-hint">上で材料Aを選択してください。</p>
             )}
           </>
         ) : (

@@ -159,6 +159,46 @@
   font-weight: 600;
 }
 
+.drink-candidates-table-wrap {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+  border-radius: 8px;
+  border: 2px solid #4a3c2a;
+  background: rgba(245, 240, 230, 0.15);
+}
+
+.drink-candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.drink-candidates-table th,
+.drink-candidates-table td {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(74, 60, 42, 0.4);
+}
+
+.drink-candidates-table th {
+  background: rgba(201, 162, 39, 0.35);
+  color: #e8d4a0;
+  font-weight: 600;
+}
+
+.drink-candidates-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.drink-candidates-table tbody tr:hover {
+  background: rgba(245, 240, 230, 0.08);
+}
+
+.drink-candidates-table .drink-name {
+  font-weight: 500;
+  color: #e8d4a0;
+}
+
 .no-results-hint {
   color: #6b5b4a;
   font-size: 0.95rem;
